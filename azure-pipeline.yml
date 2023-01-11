@@ -1,0 +1,91 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  # The trigger cannot be a variable
+  # Batch builds to reduce the number of runs you start.
+  # The system waits until the run is completed,
+  # then starts another run with all changes that have not yet been built.
+  batch: true
+  branches:
+    include:
+      - dev
+      - main
+      - staging
+      # Wildcard to automatically trigger pipeline for all chore and feature branches
+      - chore/*
+      - feature/*
+
+variables:
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+      - name: BRANCH_NAME
+        value: $[replace(replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', ''), '/', '-') ]
+  - ${{ else }}:
+      - name: BRANCH_NAME
+        value: $[replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), '/', '-') ]
+  - name: GIT_COMMIT
+    value: $(Build.SourceVersion)
+  - name: GIT_BRANCH
+    value: $(Build.SourceBranch)
+  - name: terraformWorkingDirectory
+    value: $(System.DefaultWorkingDirectory)/terraform
+  - name: dockerImageName
+    value: 'willhl2/app-name-web-$(BRANCH_NAME)'
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: DockerImage
+    jobs:
+      - job: BuildAndPush
+        continueOnError: false
+        steps:
+          - task: Docker@2
+            displayName: Build and push docker image
+            inputs:
+              containerRegistry: 'Docker repo - Origin-API'
+              repository: '$(dockerImageName)'
+              command: 'buildAndPush'
+              Dockerfile: '**/Dockerfile'
+              tags: '$(GIT_COMMIT)'
+
+  - stage: DeployWithTerraform
+    jobs:
+      - job: RunTerraform
+        continueOnError: false
+        steps:
+          - task: TerraformInstaller@0
+            displayName: Terraform Install
+            inputs:
+              terraformVersion: 'latest'
+          - script: |
+              RC_FILE=".terraformrc"
+              cat > ${RC_FILE} << EOF
+              credentials "app.terraform.io" {
+                token = "$(terraform-api-token)"
+              }
+              EOF
+              mv .terraformrc ~/.terraformrc
+              export TF_CLI_CONFIG_FILE="~/.terraformrc"
+            name: terraform_cloud_credentials
+            workingDirectory: '$(terraformWorkingDirectory)'
+            displayName: 'Terraform Cloud Credentials'
+          # Run Terraform init to initialize the workspace
+          - bash: terraform init
+            workingDirectory: $(terraformWorkingDirectory)
+            displayName: Terraform Init
+          # Run Terraform validate
+          - bash: terraform validate
+            workingDirectory: $(terraformWorkingDirectory)
+            displayName: Terraform Validate
+          # Run Terraform plan
+          - bash: terraform plan -var DOCKER_IMAGE_NAME=$(dockerImageName) -var DOCKER_IMAGE_TAG=$(GIT_COMMIT) -var CUSTOM_DOMAIN='app-name.dev'
+            workingDirectory: $(terraformWorkingDirectory)
+            displayName: Terraform Plan
+          # Run Terraform apply
+          - bash: terraform apply -auto-approve -var DOCKER_IMAGE_NAME=$(dockerImageName) -var DOCKER_IMAGE_TAG=$(GIT_COMMIT) -var CUSTOM_DOMAIN='app-name.dev'
+            workingDirectory: $(terraformWorkingDirectory)
+            displayName: Terraform Apply

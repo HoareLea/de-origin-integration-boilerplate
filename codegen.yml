@@ -1,0 +1,14 @@
+schema:
+  - ${REACT_APP_BUILDING_GRAPH_EXT}:
+      loader: ./codegen-loader.js
+generates:
+  ./types/aecTypes.d.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+    config:
+      enumsAsTypes: true
+    hooks:
+      afterAllFileWrite:
+        - eslint --fix
+        - prettier --write

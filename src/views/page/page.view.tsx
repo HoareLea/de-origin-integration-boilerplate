@@ -1,22 +1,20 @@
 import React, { useEffect } from "react";
 
-import { Flex, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
-import { AppProps } from "../../App.model";
 import useQueryProject from "../../hooks/project.hook";
 
-// import Button from "@components/Button/Button";
+const MultipartComponent = React.lazy(
+  () => import("de_common_ui/MultipartComponent")
+);
 const Button = React.lazy(() => import("de_common_ui/Button"));
+interface PageViewProps {
+  projectId: string;
+}
 
-const PageView: React.FC<AppProps> = ({
-  mode = "light",
+const PageView: React.FC<PageViewProps> = ({
   projectId,
-}: AppProps): JSX.Element => {
-  const { setColorMode } = useColorMode();
-  // We shouldn't need to change the bg colour of the div if the document/body is transparent.
-  // This is an example of consuming a host colorMode
-  const bgColour = useColorModeValue("HLgray.50", "HLcharcoal.500"); // abstract these alterning values
-  console.log(projectId);
+}: PageViewProps): JSX.Element => {
   const {
     data: buildingData,
     loading: isLoadingDataProject,
@@ -30,12 +28,12 @@ const PageView: React.FC<AppProps> = ({
     if (dataError) console.log(dataError);
   }, [isLoadingDataProject, buildingData]);
 
-  useEffect(() => setColorMode(mode), [mode]);
   return (
-    <Flex bg={bgColour}>
+    <Flex>
       <h1>Origin Integration Boilerplate v2</h1>
       <h2>React, Typescript, Chakra, Webpack remote</h2>
       <Button variant="primary">Test Button</Button>
+      <MultipartComponent />
     </Flex>
   );
 };

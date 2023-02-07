@@ -20,7 +20,7 @@ function ErrorFallback({ error, resetErrorBoundary }: any) {
   console.log(error);
   return (
     <div role="alert">
-      <p>Something went wrong in SZT:</p>
+      <p>Something went wrong in this boilerplate:</p>
       <pre>{error?.message}</pre>
       <button type="button" onClick={resetErrorBoundary}>
         Try again

@@ -4,9 +4,6 @@ import { Flex } from "@chakra-ui/react";
 
 import useQueryProject from "../../hooks/project.hook";
 
-const MultipartComponent = React.lazy(
-  () => import("de_common_ui/MultipartComponent")
-);
 const Button = React.lazy(() => import("de_common_ui/Button"));
 interface PageViewProps {
   projectId: string;
@@ -32,8 +29,7 @@ const PageView: React.FC<PageViewProps> = ({
     <Flex>
       <h1>Origin Integration Boilerplate v2</h1>
       <h2>React, Typescript, Chakra, Webpack remote</h2>
-      <Button variant="primary">Test Button</Button>
-      <MultipartComponent />
+      <Button variant="primary">Test Button from de-common-ui</Button>
     </Flex>
   );
 };

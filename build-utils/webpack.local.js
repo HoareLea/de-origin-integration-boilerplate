@@ -17,7 +17,7 @@ const alias = {
 
 module.exports = {
   entry: "./src/index",
-  mode: "development",
+  mode: "none",
   output: {
     publicPath: "auto",
     uniqueName: "de_boiler"
@@ -89,7 +89,7 @@ module.exports = {
       MyAppVersion: JSON.stringify(pkg.version),
     }),
     new Dotenv({
-      path: path.resolve(__dirname, "..", "./.env.development"),
+      path: path.resolve(__dirname, "..", "./.env.local"),
       systemvars: true,
     }),
     new webpack.ProgressPlugin(),
@@ -97,7 +97,7 @@ module.exports = {
     new WebpackRemoteTypesPlugin({
       remotes: {
         de_common_ui:
-          "de-common-ui@https://origin-tf-dev-web-common-dev.azurewebsites.net/remoteEntry.js",
+          "de-common-ui@http://localhost:3002/remoteEntry.js",
       },
       outputDir: "remote-types", // supports [name] as the remote name
       remoteFileName: "[name]-dts.tgz", // default filename is [name]-dts.tgz where [name] is the remote name, for example, `app` with the above setup
@@ -143,10 +143,9 @@ module.exports = {
       },
       remotes: {
         de_common_ui:
-          "de_common_ui@https://origin-tf-dev-web-common-dev.azurewebsites.net/remoteEntry.js",
+          "de_common_ui@http://localhost:3002/remoteEntry.js",
         de_origin:
-          "de_origin@https://chore-5401.originaec.app/remoteEntry.js",
-          // "de_origin@http://localhost:3001/remoteEntry.js",
+          "de_origin@http://localhost:3001/remoteEntry.js",
       },
     }),
     new HtmlWebpackPlugin({

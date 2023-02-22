@@ -6,7 +6,7 @@ const ModuleFederationPlugin =
   require("webpack").container.ModuleFederationPlugin;
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const TarWebpackPlugin = require('tar-webpack-plugin').default;
+// const TarWebpackPlugin = require('tar-webpack-plugin').default;
 const deps = require('../package.json').dependencies;
 
 const alias = {
@@ -19,13 +19,14 @@ module.exports = [
     name: "dts",
     mode: "production",
     entry: [
-      "./src/components/Button",
+      "./src/App.view",
+      "./src/components/Widget",
     ],
     output: {
       publicPath: "auto",
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".css"],
+      extensions: [".ts", ".tsx", ".js", ".css", ".png"],
       alias
     },
     module: {
@@ -71,9 +72,10 @@ module.exports = [
             {
               loader: 'dts-loader',
               options: {
-                name: 'new_app', // The name configured in ModuleFederationPlugin
+                name: 'de_boiler', // The name configured in ModuleFederationPlugin
                 exposes: { // The exposes configured in ModuleFederationPlugin
                   './App': './src/App.view.tsx',
+                  './Widget': './src/components/Widget/Widget.tsx',
                 },
                 typesOutputDir: '.wp_federation' // Optional, default is '.wp_federation'
               },
@@ -85,24 +87,32 @@ module.exports = [
   },
   {
     entry: "./src/index",
-    mode: "development",
+    mode: "production",
     output: {
       publicPath: "auto",
+      uniqueName: "de_boiler",
     },
     resolve: {
-      extensions: [".tsx", ".ts", ".js", ".svg", ".css"],
+      extensions: [".tsx", ".ts", ".js", ".svg", ".css", ".png"],
       alias
     },
     module: {
       rules: [
         {
-          test: /\.(css)$/,
+          test: /\.png/,
+          type: 'asset/resource'
+        },
+        {
+          test: /\.s[ac]ss$/i,
           use: [
             {
               loader: 'style-loader'
             },
             {
               loader: 'css-loader'
+            },
+            {
+              loader: 'sass-loader'
             },
             {
               loader: "postcss-loader",
@@ -122,6 +132,10 @@ module.exports = [
             },
           ],
           include: path.resolve(__dirname, '../'),
+        },
+        {
+          test: /\.(png|jpe?g|gif)$/i,
+          loader: 'file-loader'
         },
         {
           test: /bootstrap\.tsx$/,
@@ -151,13 +165,13 @@ module.exports = [
       }),
       new webpack.ProgressPlugin(),
       new CleanWebpackPlugin(),
-      new TarWebpackPlugin({
+      /* new TarWebpackPlugin({
         action: 'c',
         gzip: true,
         cwd: path.resolve(process.cwd(), '.wp_federation'),
-        file: path.resolve(process.cwd(), 'dist', 'app-name-dts.tgz'),
-        fileList: ['new_app']
-      }),
+        file: path.resolve(process.cwd(), 'dist', 'new-app-dts.tgz'),
+        fileList: ['de_boiler']
+      }), */
       new WebpackRemoteTypesPlugin({
         remotes: {
           de_common_ui:
@@ -167,34 +181,19 @@ module.exports = [
         remoteFileName: "[name]-dts.tgz", // default filename is [name]-dts.tgz where [name] is the remote name, for example, `app` with the above setup
       }),
       new ModuleFederationPlugin({
-        name: "new_app",
+        name: "de_boiler",
         filename: "remoteEntry.js",
         exposes: {
-          "./App": "./src/App.view",
+          './App': './src/App.view.tsx',
+          './Widget': './src/views/Widget/Widget.tsx',
         },
         shared: {
           react: {
-            requiredVersion: deps.react,
+            requiredVersion: "18.2.0",
             singleton: true,
           },
           "react-dom": {
-            requiredVersion: deps["react-dom"],
-            singleton: true,
-          },
-          "@emotion/react": {
-            requiredVersion: deps["@emotion/react"],
-            singleton: true,
-          },
-          "@emotion/styled": {
-            requiredVersion: deps["@emotion/styled"],
-            singleton: true,
-          },
-          "@chakra-ui/react": {
-            requiredVersion: deps["@chakra-ui/react"],
-            singleton: true,
-          },
-          "framer-motion": {
-            requiredVersion: deps["framer-motion"],
+            requiredVersion: "18.2.0",
             singleton: true,
           },
         },
@@ -202,7 +201,7 @@ module.exports = [
           de_common_ui:
             "de_common_ui@https://origin-tf-dev-web-common-dev.azurewebsites.net/remoteEntry.js",
           de_origin:
-            "de_origin@http://hledev.originaec.app/remoteEntry.js"
+            "de_origin@https://origin-tf-dev-web-chore-5401.azurewebsites.net/remoteEntry.js",
         },
       }),
       new HtmlWebpackPlugin({
@@ -213,7 +212,7 @@ module.exports = [
       static: {
         directory: path.join(__dirname, "..", "dist"),
       },
-      port: 3001,
+      port: 3004,
       open: true,
       compress: false,
       historyApiFallback: true,

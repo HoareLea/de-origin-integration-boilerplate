@@ -1,10 +1,16 @@
 import React, { useEffect } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  ErrorFallback,
+  errorHandler,
+} from "@components/ErrorFallback/ErrorFallback.component";
 
 import useQueryProject from "../../hooks/project.hook";
 
 const Button = React.lazy(() => import("de_common_ui/Button"));
+
 interface PageViewProps {
   projectId: string;
 }
@@ -26,10 +32,17 @@ const PageView: React.FC<PageViewProps> = ({
   }, [isLoadingDataProject, buildingData]);
 
   return (
-    <Flex>
-      <h1>Origin Integration Boilerplate v2</h1>
-      <h2>React, Typescript, Chakra, Webpack remote</h2>
-      <Button variant="primary">Test Button from de-common-ui</Button>
+    <Flex flexDirection="column" alignItems="start">
+      <Box as="header" mb="8">
+        <Heading as="h1" mb="2">
+          Origin Integration Boilerplate
+        </Heading>
+        <Text as="strong">Federated Remote App</Text>
+        <Text>React, Typescript, Apollo, Chakra UI</Text>
+      </Box>
+      <ErrorBoundary FallbackComponent={ErrorFallback} onError={errorHandler}>
+        <Button variant="primary">Test Button from de-common-ui</Button>
+      </ErrorBoundary>
     </Flex>
   );
 };

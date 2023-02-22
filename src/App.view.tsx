@@ -1,56 +1,23 @@
-import React from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import React, { useContext } from "react";
 
-import { Project } from "types/aecTypes";
+import { AuthRemoteContext } from "de_origin/AuthRemote";
 
-import { OriginServicesRequest } from "./auth.config";
-import PageView from "./views/page/page.view";
+import PageContainer from "./views/page/page.container";
 
-const ApolloAuthRemoteProvider = React.lazy(
-  () => import("de_origin/ApolloAuthRemoteProvider")
-);
 export interface AppProps {
-  authContext?: any;
-  isAdmin?: boolean;
   projectId?: any;
-  project?: Project | null;
 }
 
-function ErrorFallback({ error, resetErrorBoundary }: any) {
-  console.log(error);
-  return (
-    <div role="alert">
-      <p>Something went wrong in this boilerplate:</p>
-      <pre>{error?.message}</pre>
-      <button type="button" onClick={resetErrorBoundary}>
-        Try again
-      </button>
-    </div>
-  );
-}
-
-const myErrorHandler = (error: Error, info: { componentStack: string }) => {
-  console.info(error, info);
-};
-
-const AppView: React.FC<AppProps> = ({
-  authContext,
-  projectId,
-  isAdmin,
-  project = null,
-}: AppProps): JSX.Element => {
-  console.log("isAdmin: ", isAdmin);
-  console.log("project: ", project);
-  return (
-    <ErrorBoundary FallbackComponent={ErrorFallback} onError={myErrorHandler}>
-      <ApolloAuthRemoteProvider
-        authContext={authContext}
-        servicesRequest={OriginServicesRequest}
-      >
-        <PageView projectId={projectId} />
-      </ApolloAuthRemoteProvider>
-    </ErrorBoundary>
-  );
+const AppView: React.FC<AppProps> = ({ projectId }: AppProps): JSX.Element => {
+  const {
+    useAuth: { isAuthenticated },
+  } = useContext<any>(AuthRemoteContext);
+  // const { isAuthenticated } = useAuth();
+  console.log("isAuthenticated: ", isAuthenticated);
+  // @TODO: create reactive vars for shell global data
+  // OR..
+  // @TODO: create provider for shell global data?
+  return <PageContainer projectId={projectId} />;
 };
 
 export default AppView;

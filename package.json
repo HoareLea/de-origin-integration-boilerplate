@@ -2,18 +2,33 @@
   "name": "@typescript/de-origin-integration-boilerplate",
   "version": "0.1.0",
   "private": true,
-  "description": "MFE project seed files for when embedding a new feature App into the Origin Federated platform",
+  "description": "MFE project seed files for embedding a remote App into the Origin Federated platform",
   "main": "./src/index.tsx",
+  "scripts": {
+    "start": "yarn lint:fix && webpack-dev-server --config ./build-utils/webpack.config.js --env env=local",
+    "start:dev": "webpack-dev-server --config ./build-utils/webpack.config.js --env env=development",
+    "build": "yarn lint:fix && yarn generate && npx webpack --config ./build-utils/webpack.config.js --env env=production --progress",
+    "build:local": "npx webpack --config ./build-utils/webpack.config.js --env env=local --progress",
+    "lint": "npx eslint",
+    "lint:fix": "npx eslint src --fix",
+    "serve": "yarn build:local && serve dist -p 3004",
+    "clean": "rm -rf dist .wp_federation remote-types",
+    "generate:dev": "graphql-codegen -r dotenv/config --config codegen.yml dotenv_config_path=.env.development",
+    "generate:prod": "graphql-codegen -r dotenv/config --config codegen.yml dotenv_config_path=.env.production",
+    "generate": "graphql-codegen -r dotenv/config --config codegen.yml"
+  },
   "dependencies": {
     "@apollo/client": "^3.6.2",
+    "@chakra-ui/icons": "^1.1.7",
     "@chakra-ui/react": "2.4.1",
     "@emotion/react": "11.10.5",
     "@emotion/styled": "11.10.5",
     "framer-motion": "^7.6.7",
     "graphql": "^16.6.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4",
+    "react-lazily": "^0.9.1",
     "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
@@ -24,8 +39,8 @@
     "@babel/preset-typescript": "^7.18.6",
     "@graphql-codegen/cli": "^2.2.0",
     "@graphql-codegen/typescript-operations": "^2.1.4",
-    "@types/react": "18.0.25",
-    "@types/react-dom": "18.0.9",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.10",
     "@types/react-test-renderer": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
@@ -67,19 +82,7 @@
     "typescript": "^4.4.4",
     "webpack": "5.52.1",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "4.1.1",
+    "webpack-dev-server": "^4.2.1",
     "webpack-remote-types-plugin": "^0.2.6"
-  },
-  "scripts": {
-    "start": "yarn clean && yarn lint:fix && yarn generate:dev && webpack-dev-server --config ./build-utils/webpack.config.js --env env=development",
-    "start:dev": "webpack-dev-server --config ./build-utils/webpack.config.js --env env=development",
-    "build": "yarn generate && yarn lint:fix && npx webpack --config ./build-utils/webpack.config.js --env env=production --progress",
-    "lint": "npx eslint",
-    "lint:fix": "npx eslint src --fix",
-    "serve": "yarn clean && yarn build && serve dist -p 3001",
-    "clean": "rm -rf dist .wp_federation",
-    "generate:dev": "graphql-codegen -r dotenv/config --config codegen.yml dotenv_config_path=.env.development",
-    "generate:prod": "graphql-codegen -r dotenv/config --config codegen.yml dotenv_config_path=.env.production",
-    "generate": "graphql-codegen -r dotenv/config --config codegen.yml"
   }
 }

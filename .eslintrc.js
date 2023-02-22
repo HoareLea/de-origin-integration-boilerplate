@@ -1,6 +1,6 @@
 module.exports = {
   globals: {
-    "AppVersion": "readonly"
+    "MyAppVersion": "readonly"
   },
   plugins: ["@typescript-eslint", "react", "react-hooks", "jsx-a11y", "unused-imports", "prettier"],
   extends: ["airbnb", "airbnb-typescript", "plugin:jsx-a11y/recommended", "plugin:prettier/recommended"],

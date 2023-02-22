@@ -1,5 +1,5 @@
 // Third party typings go here
-declare const AppVersion: string;
+declare const MyAppVersion: string;
 declare module "*.svg" {
   import * as React from "react";
 

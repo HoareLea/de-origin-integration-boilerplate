@@ -1,5 +1,5 @@
 schema:
-  - ${REACT_APP_BUILDING_GRAPH_EXT}:
+  - ${REACT_APP_ORIGIN_PLATFORM_SCHEMA}:
       loader: ./codegen-loader.js
 generates:
   ./types/aecTypes.d.ts:

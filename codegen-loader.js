@@ -1,5 +1,6 @@
 const { buildClientSchema } = require("graphql");
 const dotenv = require("dotenv");
+const fetch = require("cross-fetch");
 
 dotenv.config();
 

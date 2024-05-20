@@ -8,7 +8,7 @@
     "start": "yarn lint:fix && webpack-dev-server --config ./build-utils/webpack.config.js --env env=local",
     "start:dev": "webpack-dev-server --config ./build-utils/webpack.config.js --env env=development",
     "build": "yarn lint:fix && yarn generate && npx webpack --config ./build-utils/webpack.config.js --env env=production --progress",
-    "build:local": "npx webpack --config ./build-utils/webpack.config.js --env env=local --progress",
+    "build:dev": "yarn lint:fix && yarn generate && npx webpack --config ./build-utils/webpack.config.js --env env=production --progress",
     "lint": "npx eslint",
     "lint:fix": "npx eslint src --fix",
     "serve": "yarn build:local && serve dist -p 3004",

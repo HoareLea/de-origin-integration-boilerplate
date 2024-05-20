@@ -4,6 +4,10 @@ var properties = {
   mode: "development",
   devtool: "eval-source-map",
   dotEnvFile: "./.env.development",
+  remoteTypes: {
+    de_common_ui:
+      "de-common-ui@https://dev.originaec.app/common/remoteEntry.js",
+  },
   remoteModules: {
     de_common_ui:
       "de_common_ui@https://dev.originaec.app/common/remoteEntry.js",

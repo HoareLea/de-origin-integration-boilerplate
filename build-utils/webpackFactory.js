@@ -21,6 +21,7 @@ const create = ({
   mode,
   devtool,
   dotEnvFile,
+  remoteTypes,
   remoteModules,
   minimize = false,
   minimizer = undefined,
@@ -103,6 +104,12 @@ const create = ({
       systemvars: true,
     }),
     new webpack.ProgressPlugin(),
+    new CleanWebpackPlugin(),
+    new WebpackRemoteTypesPlugin({
+      remotes: remoteTypes,
+      outputDir: "remote-types", // supports [name] as the remote name
+      remoteFileName: "[name]-dts.tgz", // default filename is [name]-dts.tgz where [name] is the remote name, for example, `app` with the above setup
+    }),
     new ModuleFederationPlugin({
       name: "de_boiler",
       filename: "remoteEntry.js",

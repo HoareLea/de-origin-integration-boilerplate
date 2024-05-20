@@ -29,7 +29,8 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4",
     "react-lazily": "^0.9.1",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "uglifyjs-webpack-plugin": "^2.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.15.5",

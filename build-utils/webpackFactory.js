@@ -21,7 +21,6 @@ const create = ({
   mode,
   devtool,
   dotEnvFile,
-  remoteTypes,
   remoteModules,
   minimize = false,
   minimizer = undefined,
